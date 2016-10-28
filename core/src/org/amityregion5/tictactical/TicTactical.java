@@ -17,6 +17,7 @@ public class TicTactical extends Game {
 	Texture O;
 	Texture grid;
 	Texture selector;
+	Texture movingDisplay;
 	SpriteBatch spritebatch;
 	private char[][] board = new char[9][9];
 	private boolean turn = false; // false is X, True is O
@@ -30,7 +31,10 @@ public class TicTactical extends Game {
 		X = new Texture(Gdx.files.internal("X.png"));
 		O = new Texture(Gdx.files.internal("O.png"));
 		selector = new Texture(Gdx.files.internal("selector.png"));
+		movingDisplay = new Texture(Gdx.files.internal("isMovingNow.png"));
 		grid = new Texture(Gdx.files.internal("grid.png"));
+		
+		
 		spritebatch = new SpriteBatch();
 		spritebatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		 
@@ -148,6 +152,16 @@ public class TicTactical extends Game {
 			{
 				//spritebatch.
 			}
+			
+			//printing whose turn it b
+			{
+				if(turn){
+					spritebatch.draw(O, grid_size - 30 + slot_size, miniboard_size * 2 , miniboard_size, miniboard_size);
+				}else{
+					spritebatch.draw(X, grid_size - 30 + slot_size, miniboard_size * 2 , miniboard_size, miniboard_size);
+				}
+				spritebatch.draw(movingDisplay, grid_size - 30 + slot_size, miniboard_size * 2 - slot_size, miniboard_size, miniboard_size);
+			}
 		}
 		spritebatch.end();
 	}
@@ -157,6 +171,8 @@ public class TicTactical extends Game {
 		X.dispose();
 		O.dispose();
 		grid.dispose();
+		selector.dispose();
+		movingDisplay.dispose();
 		spritebatch.dispose();
 	}
 
