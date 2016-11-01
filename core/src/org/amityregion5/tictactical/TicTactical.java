@@ -10,7 +10,8 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class TicTactical extends Game {
-	//is jus gam. why yew hef to be mad?
+	// is jus gam
+	// TODO things n stuff
 	OrthographicCamera cam;
 
 	Texture X;
@@ -18,6 +19,7 @@ public class TicTactical extends Game {
 	Texture grid;
 	Texture selector;
 	Texture movingDisplay;
+	Texture winDisplay;
 	SpriteBatch spritebatch;
 	private char[][] board = new char[9][9];
 	private boolean turn = false; // false is X, True is O
@@ -33,7 +35,7 @@ public class TicTactical extends Game {
 		selector = new Texture(Gdx.files.internal("selector.png"));
 		movingDisplay = new Texture(Gdx.files.internal("isMovingNow.png"));
 		grid = new Texture(Gdx.files.internal("grid.png"));
-		
+		winDisplay = new Texture(Gdx.files.internal("hasWon.png"));
 		
 		spritebatch = new SpriteBatch();
 		spritebatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -48,7 +50,7 @@ public class TicTactical extends Game {
 		int miniboard_size = ((grid_size - 60) / 3) - 10;
 		int slot_size = (miniboard_size / 3) - (miniboard_size / 9);
 		
-		if (Gdx.input.justTouched() && Gdx.input.getX() <= grid_size + 30 && Gdx.input.getY() <= Gdx.graphics.getHeight() - 30 && Gdx.input.getY() >= 30 && Gdx.input.getX() >= 30) {
+		if (Gdx.input.justTouched() && Gdx.input.getX() <= grid_size + 30 && (Gdx.graphics.getHeight() - Gdx.input.getY()) <= Gdx.graphics.getHeight() - 30 && Gdx.input.getY() >= 30 && Gdx.input.getX() >= 30 && win == 0) {
 			int in_x = Gdx.input.getX() - 30;
 			int in_y = Gdx.graphics.getHeight() - Gdx.input.getY() - 30;
 			int miniboard = -1;
@@ -89,15 +91,13 @@ public class TicTactical extends Game {
 					board0[i] = board[i][0];
 				}
 				char winner = evaluate(board0, miniboard);
-				if(winner == 'X'){
-					win = 'X';
-				}else if(winner == 'O'){
-					win = 'O';;
+				if(winner == 'X' || winner == 'O'){
+					win = winner;
 				}else{
 					int tie_test = 0;
 					for(int i = 0; i < 9; i++){
 						for(int j = 0; j < 9; j ++){
-							if(board[i][j] != ' '){
+							if(board[i][j] != 0){
 								tie_test++;
 							}
 						}
@@ -141,20 +141,30 @@ public class TicTactical extends Game {
 							spritebatch.draw(X, 32.5f + ((i % 3) * 2.5f)  + ((j % 3) * 2.5f) + ((grid_size - 60) * (i % 3)) / 3 + ((miniboard_size * (j % 3) / 3) + slot_size / 2) - (slot_size / 3), 32.5f + ((i / 3) * 2.5f)  + ((j / 3) * 2.5f) + ((grid_size - 60) * (i / 3)) / 3 + ((miniboard_size * (j / 3) / 3) + slot_size / 2) - (slot_size / 3), slot_size, slot_size);
 						}else if(board[i][j] == 'o'){
 							spritebatch.draw(O, 32.5f + ((i % 3) * 2.5f)  + ((j % 3) * 2.5f) + ((grid_size - 60) * (i % 3)) / 3 + ((miniboard_size * (j % 3) / 3) + slot_size / 2) - (slot_size / 3), 32.5f + ((i / 3) * 2.5f)  + ((j / 3) * 2.5f) + ((grid_size - 60) * (i / 3)) / 3 + ((miniboard_size * (j / 3) / 3) + slot_size / 2) - (slot_size / 3), slot_size, slot_size);
-						}else{
-
 						}
 					}
 				}
 			}
 			
 			//printing win statements
-			{
-				//spritebatch.
+			if(win != 0){
+				if(win == 'X'){
+					spritebatch.draw(X, grid_size - 30 + slot_size, miniboard_size * 2 , miniboard_size, miniboard_size);
+					spritebatch.draw(winDisplay, grid_size - 30 + slot_size * 1.25f, miniboard_size * 2 - slot_size * 1.25f, miniboard_size, miniboard_size);
+					
+				}else if(win == 'O'){
+					spritebatch.draw(O, grid_size - 30 + slot_size, miniboard_size * 2 , miniboard_size, miniboard_size);	
+					spritebatch.draw(winDisplay, grid_size - 30 + slot_size * 1.25f, miniboard_size * 2 - slot_size * 1.25f, miniboard_size, miniboard_size);
+					
+				}else{
+					System.out.println(win);
+				}
+				
+				
 			}
 			
 			//printing whose turn it b
-			{
+			if(win == 0){
 				if(turn){
 					spritebatch.draw(O, grid_size - 30 + slot_size, miniboard_size * 2 , miniboard_size, miniboard_size);
 				}else{
@@ -173,6 +183,7 @@ public class TicTactical extends Game {
 		grid.dispose();
 		selector.dispose();
 		movingDisplay.dispose();
+		winDisplay.dispose();
 		spritebatch.dispose();
 	}
 
