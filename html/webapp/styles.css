@@ -4,7 +4,17 @@ canvas {
 }
 
 body {
-    background-color: #222222;
+    background-color: #FFFFFF;
+}
+
+.byText {
+    text-align:center;
+    color: #000000;
+}
+
+.titleText {
+    text-align:center;
+    color: #000000;
 }
 
 .superdev {
