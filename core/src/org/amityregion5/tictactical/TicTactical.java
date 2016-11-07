@@ -38,6 +38,7 @@ public class TicTactical extends Game {
 	private boolean turn = false; // false is X, True is O
 	private int next_move = -1;
 	private char win = 0;
+	private int players = 2;
 	private String easter = "egg";
 	
 	@Override
@@ -78,100 +79,49 @@ public class TicTactical extends Game {
 		int in_y = Gdx.graphics.getHeight() - Gdx.input.getY() - 30;
 		int miniboard = -1;
 		int slot = -1;
-	
-		miniboard = ((((in_x + 4) / (miniboard_size + 10))) % 3) + 3 * ((in_y + 4) / (miniboard_size + 10));
-		slot = ((in_x - (miniboard % 3) * (miniboard_size + 10)) / ((miniboard_size + 10) / 3) % 3) + 3 * ((in_y - (miniboard / 3) * (miniboard_size + 10)) / ((miniboard_size + 10) / 3));
-		
-		if(slot > 8){
-			slot = 8;
-		}else if(slot < 0){
-			slot = 0;
-		}
-		if(miniboard > 8){
-			miniboard = 8;
-		}else if(miniboard < 0){
-			miniboard = 0;
-		}
-		
-		if (Gdx.input.justTouched()) {
-			if(win == 0 && in_x <= grid_size - 60 && in_y <= grid_size - 60 && in_x >= 0 && in_y >= 0){
-				                           
-				if(!(miniboard == -1 || slot == -1) && board[miniboard][slot] == 0 && (miniboard == next_move || next_move == -1) && big_board[miniboard] == 0){
-					game_logic(miniboard, slot);
-				}
-				
-			}else if(win != 0){
-				reset();
-			}
-		}
 
-
-		spritebatch.setProjectionMatrix(cam.combined);
-		spritebatch.begin();{
-
-			spritebatch.draw(grid, 30, 30, grid_size - 60, grid_size - 60);
-			for(int i = 1; i <= 3; i ++){
-				for(int j = 1; j <= 3; j ++){
-					spritebatch.draw(grid, 30 + (i * 2.5f) + ((grid_size - 60) * (i - 1)) / 3, 30 + (j * 2.5f) + ((grid_size - 60) * (j - 1)) / 3, miniboard_size, miniboard_size);
-					if(((i - 1) + (j- 1) * 3 == next_move || next_move == -1) && win == 0 && big_board[(i - 1) + (j - 1) * 3] == 0){
-						spritebatch.draw(selectorG, 30 + (i * 2.5f) + ((grid_size - 60) * (i - 1)) / 3, 30 + (j * 2.5f) + ((grid_size - 60) * (j - 1)) / 3, miniboard_size, miniboard_size);
-					}
-				}	
-			}
-			
-			//printing highlight for moused over tile
-			if(in_x <= grid_size - 60 && in_y <= grid_size - 60 && in_x >= 0 && in_y >= 0){
+		if(players == 0){
+			//you are on menu. So make a render_menu method and a menu_interaction method
+		}else{
+			render_game(spritebatch, grid_size, miniboard_size, slot_size, miniboard, slot, in_x, in_y);
+			if(players == 1){
 				if(turn){
-					spritebatch.draw(selectorB, 32.5f + ((miniboard % 3) * 2.5f)  + ((slot % 3) * 2.5f) + ((grid_size - 60) * (miniboard % 3)) / 3 + ((miniboard_size * (slot % 3) / 3) + slot_size / 2) - (slot_size / 3), 32.5f + ((miniboard / 3) * 2.5f)  + ((slot / 3) * 2.5f) + ((grid_size - 60) * (miniboard / 3)) / 3 + ((miniboard_size * (slot / 3) / 3) + slot_size / 2) - (slot_size / 3), slot_size, slot_size);
+					//AI returns miniboard and slot for its move
+					//sergey notice this and do the things
 				}else{
-					spritebatch.draw(selectorR, 32.5f + ((miniboard % 3) * 2.5f)  + ((slot % 3) * 2.5f) + ((grid_size - 60) * (miniboard % 3)) / 3 + ((miniboard_size * (slot % 3) / 3) + slot_size / 2) - (slot_size / 3), 32.5f + ((miniboard / 3) * 2.5f)  + ((slot / 3) * 2.5f) + ((grid_size - 60) * (miniboard / 3)) / 3 + ((miniboard_size * (slot / 3) / 3) + slot_size / 2) - (slot_size / 3), slot_size, slot_size);
-				}
-			}
-
-			//drawing x's and o's
-			for(int i = 0; i < 9; i++){
+					miniboard = ((((in_x + 4) / (miniboard_size + 10))) % 3) + 3 * ((in_y + 4) / (miniboard_size + 10));
+					slot = ((in_x - (miniboard % 3) * (miniboard_size + 10)) / ((miniboard_size + 10) / 3) % 3) + 3 * ((in_y - (miniboard / 3) * (miniboard_size + 10)) / ((miniboard_size + 10) / 3));
 				
-				for(int j = 0; j < 9; j ++){
-					if(board[i][j] == 'x'){
-						spritebatch.draw(X, 32.5f + ((i % 3) * 2.5f)  + ((j % 3) * 2.5f) + ((grid_size - 60) * (i % 3)) / 3 + ((miniboard_size * (j % 3) / 3) + slot_size / 2) - (slot_size / 3), 32.5f + ((i / 3) * 2.5f)  + ((j / 3) * 2.5f) + ((grid_size - 60) * (i / 3)) / 3 + ((miniboard_size * (j / 3) / 3) + slot_size / 2) - (slot_size / 3), slot_size, slot_size);
-					}else if(board[i][j] == 'o'){
-						spritebatch.draw(O, 32.5f + ((i % 3) * 2.5f)  + ((j % 3) * 2.5f) + ((grid_size - 60) * (i % 3)) / 3 + ((miniboard_size * (j % 3) / 3) + slot_size / 2) - (slot_size / 3), 32.5f + ((i / 3) * 2.5f)  + ((j / 3) * 2.5f) + ((grid_size - 60) * (i / 3)) / 3 + ((miniboard_size * (j / 3) / 3) + slot_size / 2) - (slot_size / 3), slot_size, slot_size);
-					}
 				}
-				if(big_board[i] == 'X'){
-					spritebatch.draw(X, 30 + (((i % 3) + 1) * 2.5f) + ((grid_size - 60) * (i % 3)) / 3, 30 + ((i / 3) * 2.5f) + ((grid_size - 60) * (i / 3)) / 3, miniboard_size, miniboard_size);
-				}else if(big_board[i] == 'O'){
-					spritebatch.draw(O, 30 + (((i % 3) + 1) * 2.5f) + ((grid_size - 60) * (i % 3)) / 3, 30 + ((i / 3) * 2.5f) + ((grid_size - 60) * (i / 3)) / 3, miniboard_size, miniboard_size);
-				}
-				
-			}
-			
-			//printing win statements
-			if(win != 0){
-				if(win == 'X'){
-					spritebatch.draw(X, grid_size - 30 + slot_size, miniboard_size * 2 , miniboard_size, miniboard_size);
-					spritebatch.draw(winDisplay, grid_size - 30 + slot_size * 1.25f, miniboard_size * 2 - slot_size * 1.25f, miniboard_size, miniboard_size);
 					
-				}else if(win == 'O'){
-					spritebatch.draw(O, grid_size - 30 + slot_size, miniboard_size * 2 , miniboard_size, miniboard_size);	
-					spritebatch.draw(winDisplay, grid_size - 30 + slot_size * 1.25f, miniboard_size * 2 - slot_size * 1.25f, miniboard_size, miniboard_size);	
-				}else{
-					spritebatch.draw(tieDisplay, grid_size - 30 + slot_size * 1.25f, miniboard_size * 2 - slot_size * 1.25f, miniboard_size * 1.5f, miniboard_size);		
-				}
+			}else if(players == 2){
+				miniboard = ((((in_x + 4) / (miniboard_size + 10))) % 3) + 3 * ((in_y + 4) / (miniboard_size + 10));
+				slot = ((in_x - (miniboard % 3) * (miniboard_size + 10)) / ((miniboard_size + 10) / 3) % 3) + 3 * ((in_y - (miniboard / 3) * (miniboard_size + 10)) / ((miniboard_size + 10) / 3));
+			}
+			if(slot > 8){
+				slot = 8;
+			}else if(slot < 0){
+				slot = 0;
+			}
+			if(miniboard > 8){
+				miniboard = 8;
+			}else if(miniboard < 0){
+				miniboard = 0;
 			}
 			
-			//printing whose turn it b
-			if(win == 0){
-				if(turn){
-					spritebatch.draw(O, grid_size - 30 + slot_size, miniboard_size * 2 , miniboard_size, miniboard_size);
-				}else{
-					spritebatch.draw(X, grid_size - 30 + slot_size, miniboard_size * 2 , miniboard_size, miniboard_size);
+			if (Gdx.input.justTouched()) {
+				if(win == 0 && in_x <= grid_size - 60 && in_y <= grid_size - 60 && in_x >= 0 && in_y >= 0){
+					                           
+					if(!(miniboard == -1 || slot == -1) && board[miniboard][slot] == 0 && (miniboard == next_move || next_move == -1) && big_board[miniboard] == 0){
+						game_logic(miniboard, slot);
+					}
+					
+				}else if(win != 0){
+					reset();
 				}
-				spritebatch.draw(movingDisplay, grid_size - 30 + slot_size, miniboard_size * 2 - slot_size, miniboard_size, miniboard_size);
 			}
 			
 		}
-		spritebatch.end();
 	}
 
 	@Override
@@ -251,12 +201,12 @@ public class TicTactical extends Game {
 	}
 	
 	public void reset(){
-
 		win = 0;
 		next_move = -1;
 		turn = false;
 		board = new char[9][9];
 		big_board = new char[9];
+		players = 0;
 	}
 	
 	public void game_logic(int miniboard, int slot){
@@ -312,6 +262,77 @@ public class TicTactical extends Game {
 		}else{
 			next_move = -1;
 		}
+	}
+	
+	public void render_game (SpriteBatch spritebatch, int grid_size, int miniboard_size, int slot_size, int miniboard, int slot, int in_x, int in_y){
+		
+		spritebatch.setProjectionMatrix(cam.combined);
+		
+		spritebatch.begin();{
+
+			spritebatch.draw(grid, 30, 30, grid_size - 60, grid_size - 60);
+			for(int i = 1; i <= 3; i ++){
+				for(int j = 1; j <= 3; j ++){
+					spritebatch.draw(grid, 30 + (i * 2.5f) + ((grid_size - 60) * (i - 1)) / 3, 30 + (j * 2.5f) + ((grid_size - 60) * (j - 1)) / 3, miniboard_size, miniboard_size);
+					if(((i - 1) + (j- 1) * 3 == next_move || next_move == -1) && win == 0 && big_board[(i - 1) + (j - 1) * 3] == 0){
+						spritebatch.draw(selectorG, 30 + (i * 2.5f) + ((grid_size - 60) * (i - 1)) / 3, 30 + (j * 2.5f) + ((grid_size - 60) * (j - 1)) / 3, miniboard_size, miniboard_size);
+					}
+				}	
+			}
+			
+			//printing highlight for moused over tile
+			if(in_x <= grid_size - 60 && in_y <= grid_size - 60 && in_x >= 0 && in_y >= 0){
+				if(turn){
+					spritebatch.draw(selectorB, 32.5f + ((miniboard % 3) * 2.5f)  + ((slot % 3) * 2.5f) + ((grid_size - 60) * (miniboard % 3)) / 3 + ((miniboard_size * (slot % 3) / 3) + slot_size / 2) - (slot_size / 3), 32.5f + ((miniboard / 3) * 2.5f)  + ((slot / 3) * 2.5f) + ((grid_size - 60) * (miniboard / 3)) / 3 + ((miniboard_size * (slot / 3) / 3) + slot_size / 2) - (slot_size / 3), slot_size, slot_size);
+				}else{
+					spritebatch.draw(selectorR, 32.5f + ((miniboard % 3) * 2.5f)  + ((slot % 3) * 2.5f) + ((grid_size - 60) * (miniboard % 3)) / 3 + ((miniboard_size * (slot % 3) / 3) + slot_size / 2) - (slot_size / 3), 32.5f + ((miniboard / 3) * 2.5f)  + ((slot / 3) * 2.5f) + ((grid_size - 60) * (miniboard / 3)) / 3 + ((miniboard_size * (slot / 3) / 3) + slot_size / 2) - (slot_size / 3), slot_size, slot_size);
+				}
+			}
+
+			//drawing x's and o's
+			for(int i = 0; i < 9; i++){
+				
+				for(int j = 0; j < 9; j ++){
+					if(board[i][j] == 'x'){
+						spritebatch.draw(X, 32.5f + ((i % 3) * 2.5f)  + ((j % 3) * 2.5f) + ((grid_size - 60) * (i % 3)) / 3 + ((miniboard_size * (j % 3) / 3) + slot_size / 2) - (slot_size / 3), 32.5f + ((i / 3) * 2.5f)  + ((j / 3) * 2.5f) + ((grid_size - 60) * (i / 3)) / 3 + ((miniboard_size * (j / 3) / 3) + slot_size / 2) - (slot_size / 3), slot_size, slot_size);
+					}else if(board[i][j] == 'o'){
+						spritebatch.draw(O, 32.5f + ((i % 3) * 2.5f)  + ((j % 3) * 2.5f) + ((grid_size - 60) * (i % 3)) / 3 + ((miniboard_size * (j % 3) / 3) + slot_size / 2) - (slot_size / 3), 32.5f + ((i / 3) * 2.5f)  + ((j / 3) * 2.5f) + ((grid_size - 60) * (i / 3)) / 3 + ((miniboard_size * (j / 3) / 3) + slot_size / 2) - (slot_size / 3), slot_size, slot_size);
+					}
+				}
+				if(big_board[i] == 'X'){
+					spritebatch.draw(X, 30 + (((i % 3) + 1) * 2.5f) + ((grid_size - 60) * (i % 3)) / 3, 30 + ((i / 3) * 2.5f) + ((grid_size - 60) * (i / 3)) / 3, miniboard_size, miniboard_size);
+				}else if(big_board[i] == 'O'){
+					spritebatch.draw(O, 30 + (((i % 3) + 1) * 2.5f) + ((grid_size - 60) * (i % 3)) / 3, 30 + ((i / 3) * 2.5f) + ((grid_size - 60) * (i / 3)) / 3, miniboard_size, miniboard_size);
+				}
+				
+			}
+			
+			//printing win statements
+			if(win != 0){
+				if(win == 'X'){
+					spritebatch.draw(X, grid_size - 30 + slot_size, miniboard_size * 2 , miniboard_size, miniboard_size);
+					spritebatch.draw(winDisplay, grid_size - 30 + slot_size * 1.25f, miniboard_size * 2 - slot_size * 1.25f, miniboard_size, miniboard_size);
+					
+				}else if(win == 'O'){
+					spritebatch.draw(O, grid_size - 30 + slot_size, miniboard_size * 2 , miniboard_size, miniboard_size);	
+					spritebatch.draw(winDisplay, grid_size - 30 + slot_size * 1.25f, miniboard_size * 2 - slot_size * 1.25f, miniboard_size, miniboard_size);	
+				}else{
+					spritebatch.draw(tieDisplay, grid_size - 30 + slot_size * 1.25f, miniboard_size * 2 - slot_size * 1.25f, miniboard_size * 1.5f, miniboard_size);		
+				}
+			}
+			
+			//printing whose turn it b
+			if(win == 0){
+				if(turn){
+					spritebatch.draw(O, grid_size - 30 + slot_size, miniboard_size * 2 , miniboard_size, miniboard_size);
+				}else{
+					spritebatch.draw(X, grid_size - 30 + slot_size, miniboard_size * 2 , miniboard_size, miniboard_size);
+				}
+				spritebatch.draw(movingDisplay, grid_size - 30 + slot_size, miniboard_size * 2 - slot_size, miniboard_size, miniboard_size);
+			}
+			
+		}
+		spritebatch.end();
 	}
 	
 }
