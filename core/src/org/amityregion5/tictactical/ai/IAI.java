@@ -14,8 +14,9 @@ public interface IAI {
 	 * 
 	 * @param board the two dimensional array representing the entire board
 	 * @param bigboard the array representing who has won each small board
+	 * @param availableBoards an array of booleans representing which board can be moved into
 	 * @param team the team that this AI is playing for
 	 * @return an array where the first element is the board the AI wants to make the move in and the second element is the tile within that board 
 	 */
-	public int[] chooseNextMove(char[][] board, char[] bigboard, char team);
+	public int[] chooseNextMove(char[][] board, char[] bigboard, boolean[] availableBoards, char team);
 }
