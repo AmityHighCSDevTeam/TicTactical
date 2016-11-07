@@ -11,6 +11,7 @@ public interface IAI {
 	 * Get the next move that this AI wants to make
 	 * 
 	 * This should always return a legal move
+	 * If this returns null just let it crash. it shouldnt happen.
 	 * 
 	 * @param board the two dimensional array representing the entire board
 	 * @param bigboard the array representing who has won each small board
