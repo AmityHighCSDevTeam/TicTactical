@@ -10,8 +10,17 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class TicTactical extends Game {
-	// is jus gam
+	// TODO is jus gam
 	// TODO things n stuff
+	//Grids arranged as follows:
+	/*
+	* 6 7 8
+	* 3 4 5
+	* 0 1 2
+	* 
+	*/
+		
+	
 	OrthographicCamera cam;
 
 	Texture X;
@@ -45,6 +54,8 @@ public class TicTactical extends Game {
 		winDisplay = new Texture(Gdx.files.internal("hasWon.png"));
 		tieDisplay = new Texture(Gdx.files.internal("GameTied.png"));
 		
+		easter.contains("secrets");
+		
 		spritebatch = new SpriteBatch();
 		spritebatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		/*
@@ -60,7 +71,7 @@ public class TicTactical extends Game {
 	public void render () {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		int grid_size = Math.min(Gdx.graphics.getHeight(), Gdx.graphics.getWidth());
+		int grid_size = Math.min(Gdx.graphics.getHeight(), Gdx.graphics.getWidth() * 75 / 100);
 		int miniboard_size = ((grid_size - 60) / 3) - 10;
 		int slot_size = (miniboard_size / 3) - (miniboard_size / 9);
 		int in_x = Gdx.input.getX() - 30;
@@ -68,7 +79,7 @@ public class TicTactical extends Game {
 		int miniboard = -1;
 		int slot = -1;
 	
-		miniboard = (((in_x / (miniboard_size + 10))) % 3) + 3 * (in_y / (miniboard_size + 10));
+		miniboard = ((((in_x + 4) / (miniboard_size + 10))) % 3) + 3 * ((in_y + 4) / (miniboard_size + 10));
 		slot = ((in_x - (miniboard % 3) * (miniboard_size + 10)) / ((miniboard_size + 10) / 3) % 3) + 3 * ((in_y - (miniboard / 3) * (miniboard_size + 10)) / ((miniboard_size + 10) / 3));
 		
 		if(slot > 8){
@@ -84,70 +95,11 @@ public class TicTactical extends Game {
 		
 		if (Gdx.input.justTouched()) {
 			if(win == 0 && in_x <= grid_size - 60 && in_y <= grid_size - 60 && in_x >= 0 && in_y >= 0){
-				
-				
+				                           
 				if(!(miniboard == -1 || slot == -1) && board[miniboard][slot] == 0 && (miniboard == next_move || next_move == -1) && big_board[miniboard] == 0){
-					
-					//Grids arranged as follows:
-					/*
-			 		* 6 7 8
-			 		* 3 4 5
-			 		* 0 1 2
-			 		* 
-			 		*/
-				
-					if(turn){
-						board[miniboard][slot] = 'o';
-					}else{
-						board[miniboard][slot] = 'x';
-					}
-					turn = !turn;
-					char result = evaluate(board[miniboard], slot);
-					if(result == 'x'){
-						big_board[miniboard] = 'X';
-					}else if(result == 'o'){
-						big_board[miniboard] = 'O';
-					}else{
-						int j = 0;
-						for(int i = 0; i < 9; i ++){
-							if(board[miniboard][i] != 0){
-								j++;
-							}
-						}
-						if(j == 9){
-							big_board[miniboard] = 3;
-						}
-					}
-					char[] board0 = new char[9];
-					for(int i = 0; i < 9; i++){
-						board0[i] = big_board[i];
-					}
-					char winner = evaluate(board0, miniboard);
-					if(winner == 'X' || winner == 'O'){
-						win = winner;
-					}else{
-						int tie_test = 0;
-						for(int i = 0; i < 9; i++){
-							if(big_board[i] != 0){
-								tie_test += 9;
-							}else{
-								for(int j = 0; j < 9; j ++){
-									if(board[i][j] != 0){
-										tie_test++;
-									}
-								}
-							}
-						}
-						if(tie_test == 81){
-							win = 'T';
-						}
-					}
-					if(big_board[slot] == 0){
-						next_move = slot;
-					}else{
-						next_move = -1;
-					}
+					game_logic(miniboard, slot);
 				}
+				
 			}else if(win != 0){
 				reset();
 			}
@@ -161,7 +113,7 @@ public class TicTactical extends Game {
 			for(int i = 1; i <= 3; i ++){
 				for(int j = 1; j <= 3; j ++){
 					spritebatch.draw(grid, 30 + (i * 2.5f) + ((grid_size - 60) * (i - 1)) / 3, 30 + (j * 2.5f) + ((grid_size - 60) * (j - 1)) / 3, miniboard_size, miniboard_size);
-					if(((i - 1) + (j- 1) * 3 == next_move || next_move == -1) && win == 0){
+					if(((i - 1) + (j- 1) * 3 == next_move || next_move == -1) && win == 0 && big_board[(i - 1) + (j - 1) * 3] == 0){
 						spritebatch.draw(selectorG, 30 + (i * 2.5f) + ((grid_size - 60) * (i - 1)) / 3, 30 + (j * 2.5f) + ((grid_size - 60) * (j - 1)) / 3, miniboard_size, miniboard_size);
 					}
 				}	
@@ -217,7 +169,6 @@ public class TicTactical extends Game {
 				}
 				spritebatch.draw(movingDisplay, grid_size - 30 + slot_size, miniboard_size * 2 - slot_size, miniboard_size, miniboard_size);
 			}
-			
 			
 		}
 		spritebatch.end();
@@ -306,6 +257,61 @@ public class TicTactical extends Game {
 		turn = false;
 		board = new char[9][9];
 		big_board = new char[9];
+	}
+	
+	public void game_logic(int miniboard, int slot){
+		
+		if(turn){
+			board[miniboard][slot] = 'o';
+		}else{
+			board[miniboard][slot] = 'x';
+		}
+		turn = !turn;
+		char result = evaluate(board[miniboard], slot);
+		if(result == 'x'){
+			big_board[miniboard] = 'X';
+		}else if(result == 'o'){
+			big_board[miniboard] = 'O';
+		}else{
+			int j = 0;
+			for(int i = 0; i < 9; i ++){
+				if(board[miniboard][i] != 0){
+					j++;
+				}
+			}
+			if(j == 9){
+				big_board[miniboard] = 3;
+			}
+		}
+		char[] board0 = new char[9];
+		for(int i = 0; i < 9; i++){
+			board0[i] = big_board[i];
+		}
+		char winner = evaluate(board0, miniboard);
+		if(winner == 'X' || winner == 'O'){
+			win = winner;
+		}else{
+			int tie_test = 0;
+			for(int i = 0; i < 9; i++){
+				if(big_board[i] != 0){
+					tie_test += 9;
+				}else{
+					for(int j = 0; j < 9; j ++){
+						if(board[i][j] != 0){
+							tie_test++;
+						}
+					}
+				}
+			}
+			if(tie_test == 81){
+				win = 'T';
+			}
+		}
+		if(big_board[slot] == 0){
+			next_move = slot;
+		}else{
+			next_move = -1;
+		}
 	}
 	
 }
