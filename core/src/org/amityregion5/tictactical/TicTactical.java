@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class TicTactical extends Game {
+public class TicTactical extends Game{
 	// TODO is jus gam
 	// TODO things n stuff
 	//Grids arranged as follows:
@@ -33,13 +33,16 @@ public class TicTactical extends Game {
 	Texture selectorB;
 	Texture selectorG;
 	SpriteBatch spritebatch;
+	
+	org.amityregion5.tictactical.ai.MinimaxHeuristicAI ai = new org.amityregion5.tictactical.ai.MinimaxHeuristicAI(5);
 	private char[][] board = new char[9][9];
 	private char[] big_board = new char[9];
 	private boolean turn = false; // false is X, True is O
 	private int next_move = -1;
 	private char win = 0;
-	private int players = 2;
+	private int players = 1;
 	private String easter = "egg";
+	private boolean ai_team = true; // same as the other thing, just selecting ai's team(if applicable)
 	
 	@Override
 	public void create () {
@@ -79,19 +82,41 @@ public class TicTactical extends Game {
 		int in_y = Gdx.graphics.getHeight() - Gdx.input.getY() - 30;
 		int miniboard = -1;
 		int slot = -1;
-
 		if(players == 0){
 			//you are on menu. So make a render_menu method and a menu_interaction method
 		}else{
 			render_game(spritebatch, grid_size, miniboard_size, slot_size, miniboard, slot, in_x, in_y);
 			if(players == 1){
-				if(turn){
-					//AI returns miniboard and slot for its move
+				if(turn == ai_team){
+					boolean[] t = new boolean[9];
+					for(int i = 0; i < 9; i ++){
+						t[i] = false;
+					}
+					if(next_move == -1){
+						for(int i = 0; i < 9; i ++){
+							if(big_board[i] != 0){
+								t[i] = true;
+							}
+						}
+					}else{
+						t[next_move] = true;
+					}
+					char temp;
+					
+					if(ai_team){
+						temp = 'o';
+					}else{
+						temp = 'x';
+					}
+					
+					int[] ai_moves = ai.chooseNextMove(board, big_board, t, temp);
+					miniboard = ai_moves[0];
+					slot = ai_moves[1];
+					
 					//sergey notice this and do the things
 				}else{
 					miniboard = ((((in_x + 4) / (miniboard_size + 10))) % 3) + 3 * ((in_y + 4) / (miniboard_size + 10));
 					slot = ((in_x - (miniboard % 3) * (miniboard_size + 10)) / ((miniboard_size + 10) / 3) % 3) + 3 * ((in_y - (miniboard / 3) * (miniboard_size + 10)) / ((miniboard_size + 10) / 3));
-				
 				}
 					
 			}else if(players == 2){
