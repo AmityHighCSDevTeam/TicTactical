@@ -90,7 +90,7 @@ public class MinimaxHeuristicAI implements IAI {
 			}
 		}
 		
-		return score;
+		return score/90;
 	}
 	
 	private double heuristicBoard(char[] board, char player) {
