@@ -36,7 +36,7 @@ public class MinimaxHeuristicAI implements IAI {
 		
 		if (minimaxMoves.size() == 0) {
 			System.err.println("No moves left!");
-			JOptionPane.showMessageDialog(null, "NO MOVES FOUND");
+			//JOptionPane.showMessageDialog(null, "NO MOVES FOUND");
 			return null;
 		}
 		
