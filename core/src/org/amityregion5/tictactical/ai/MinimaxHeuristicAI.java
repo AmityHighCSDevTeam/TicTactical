@@ -23,15 +23,15 @@ public class MinimaxHeuristicAI implements IAI {
 		minimaxMoves = new LinkedList<Number[]>();
 		minimax(board, bigboard, availableBoards, team, team, team == 'x' ? 'o' : 'x', 0);
 		
-		double maxScore = Double.MIN_VALUE;
+		int maxScore = Integer.MIN_VALUE;
 		for (Number[] move : minimaxMoves) {
-			maxScore = Math.max(maxScore, move[2].doubleValue());
+			maxScore = Math.max(maxScore, (int)(move[2].doubleValue()*100000));
 		}
 		
 		Iterator<Number[]> iter = minimaxMoves.iterator();
 		while (iter.hasNext()) {
 			Number[] move = iter.next();
-			if (maxScore - move[2].doubleValue() > 1e-3) iter.remove();
+			if (maxScore > (int)(move[2].doubleValue()*100000)) iter.remove();
 		}
 		
 		if (minimaxMoves.size() == 0) {
