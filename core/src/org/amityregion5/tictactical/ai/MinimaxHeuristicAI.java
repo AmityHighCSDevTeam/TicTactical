@@ -139,7 +139,7 @@ public class MinimaxHeuristicAI implements IAI {
 		return min;
 	}
 
-	private boolean[] getAvailableBoards(char[][] board, char[] bigboard, int[] lastMove) {
+	public static boolean[] getAvailableBoards(char[][] board, char[] bigboard, int[] lastMove) {
 		boolean[] boards = new boolean[9];
 		if (bigboard[lastMove[1]] == 0) {
 			boards[lastMove[1]] = true;
