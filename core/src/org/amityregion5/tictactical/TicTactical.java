@@ -1,12 +1,14 @@
 package org.amityregion5.tictactical;
 
 
+import org.amityregion5.tictactical.ai.IAI;
+import org.amityregion5.tictactical.ai.MinimaxHeuristicAI;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class TicTactical extends Game{
@@ -34,7 +36,7 @@ public class TicTactical extends Game{
 	Texture selectorG;
 	SpriteBatch spritebatch;
 	
-	org.amityregion5.tictactical.ai.MinimaxHeuristicAI ai = new org.amityregion5.tictactical.ai.MinimaxHeuristicAI(5);
+	private IAI ai = new MinimaxHeuristicAI(5);
 	private char[][] board = new char[9][9];
 	private char[] big_board = new char[9];
 	private boolean turn = false; // false is X, True is O
