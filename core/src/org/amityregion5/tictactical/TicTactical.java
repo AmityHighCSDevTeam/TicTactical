@@ -92,7 +92,7 @@ public class TicTactical extends Game{
 					int[] lastMove = new int[2];
 					lastMove[1] = next_move;
 					lastMove[0] = 5138008; // hold your screen upside down, and put some blocky font on that number.
-					boolean[] availableBoards = ai.getAvailableBoards(board, big_board, lastMove);
+					boolean[] availableBoards = MinimaxHeuristicAI.getAvailableBoards(board, big_board, lastMove);
 					char temp;
 					
 					if(ai_team){
