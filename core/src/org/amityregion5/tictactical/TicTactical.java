@@ -78,37 +78,14 @@ public class TicTactical extends Game{
 		int slot_size = (miniboard_size / 3) - (miniboard_size / 9);
 		int in_x = Gdx.input.getX() - 30;
 		int in_y = Gdx.graphics.getHeight() - Gdx.input.getY() - 30;
-		int miniboard = -1;
-		int slot = -1;	
-		miniboard = ((((in_x + 4) / (miniboard_size + 10))) % 3) + 3 * ((in_y + 4) / (miniboard_size + 10));
-		slot = ((in_x - (miniboard % 3) * (miniboard_size + 10)) / ((miniboard_size + 10) / 3) % 3) + 3 * ((in_y - (miniboard / 3) * (miniboard_size + 10)) / ((miniboard_size + 10) / 3));
+		int miniboard = ((((in_x + 4) / (miniboard_size + 10))) % 3) + 3 * ((in_y + 4) / (miniboard_size + 10));
+		int slot = ((in_x - (miniboard % 3) * (miniboard_size + 10)) / ((miniboard_size + 10) / 3) % 3) + 3 * ((in_y - (miniboard / 3) * (miniboard_size + 10)) / ((miniboard_size + 10) / 3));	
+		
+
 		
 		if(players == 0){
 			//you are on menu. So make a render_menu method and a menu_interaction method
 		}else{
-			render_game(spritebatch, grid_size, miniboard_size, slot_size, miniboard, slot, in_x, in_y);
-			if(players == 1){
-				if(turn == ai_team){
-					int[] lastMove = new int[2];
-					lastMove[1] = next_move;
-					lastMove[0] = 5138008; // hold your screen upside down, and put some blocky font on that number.
-					boolean[] availableBoards = MinimaxHeuristicAI.getAvailableBoards(board, big_board, lastMove);
-					char temp;
-					
-					if(ai_team){
-						temp = 'o';
-					}else{
-						temp = 'x';
-					}
-					
-					int[] ai_moves = ai.chooseNextMove(board, big_board, availableBoards, temp);
-					miniboard = ai_moves[0];
-					slot = ai_moves[1];
-					
-					//sergey notice this and do the things
-				}
-					
-			}
 			if(slot > 8){
 				slot = 8;
 			}else if(slot < 0){
@@ -118,6 +95,15 @@ public class TicTactical extends Game{
 				miniboard = 8;
 			}else if(miniboard < 0){
 				miniboard = 0;
+			}
+			render_game(grid_size, miniboard_size, slot_size, miniboard, slot, in_x, in_y);
+			if(players == 1 && win == 0){
+				if(turn == ai_team){
+					int[] move = aiMove();
+					miniboard = move[0];
+					slot = move[1];
+				}
+					
 			}
 			
 			
@@ -274,7 +260,7 @@ public class TicTactical extends Game{
 		next_move = slot;
 	}
 	
-	public void render_game (SpriteBatch spritebatch, int grid_size, int miniboard_size, int slot_size, int miniboard, int slot, int in_x, int in_y){
+	public void render_game (int grid_size, int miniboard_size, int slot_size, int miniboard, int slot, int in_x, int in_y){
 		
 		spritebatch.setProjectionMatrix(cam.combined);
 		
@@ -343,6 +329,24 @@ public class TicTactical extends Game{
 			
 		}
 		spritebatch.end();
+	}
+	
+	public int[] aiMove(){
+		int[] lastMove = new int[2];
+		lastMove[1] = next_move;
+		lastMove[0] = 5318008; // hold your screen upside down, and put some blocky font on that number.
+		boolean[] availableBoards = MinimaxHeuristicAI.getAvailableBoards(board, big_board, lastMove);
+		char temp;
+		
+		if(ai_team){
+			temp = 'o';
+		}else{
+			temp = 'x';
+		}
+		
+		int[] out = ai.chooseNextMove(board, big_board, availableBoards, temp);
+		
+		return out;
 	}
 	
 }
