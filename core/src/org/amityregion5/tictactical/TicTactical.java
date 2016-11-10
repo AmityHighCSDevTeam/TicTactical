@@ -35,6 +35,11 @@ public class TicTactical extends Game{
 	Texture selectorR;
 	Texture selectorB;
 	Texture selectorG;
+	Texture MenuNoneSelected;
+	Texture MenuOneSelected;
+	Texture MenuTwoSelected;
+	
+	
 	SpriteBatch spritebatch;
 	
 	private IAI ai = new MinimaxHeuristicAI(5);
@@ -43,7 +48,7 @@ public class TicTactical extends Game{
 	private boolean turn = false; // false is X, True is O
 	private int next_move = 9;
 	private char win = 0;
-	private int players = 1;
+	private int players = 0;
 	private String easter = "egg";
 	private boolean ai_team = true; // same as the other thing, just selecting ai's team(if applicable)
 	
@@ -60,6 +65,10 @@ public class TicTactical extends Game{
 		grid = new Texture(Gdx.files.internal("grid.png"));
 		winDisplay = new Texture(Gdx.files.internal("hasWon.png"));
 		tieDisplay = new Texture(Gdx.files.internal("GameTied.png"));
+		MenuNoneSelected = new Texture(Gdx.files.internal("MenuNoSelection.png"));
+		MenuOneSelected = new Texture(Gdx.files.internal("MenuOneSelected.png"));
+		MenuTwoSelected = new Texture(Gdx.files.internal("MenuTwoSelected.png"));
+		
 		
 		easter.contains("secrets");
 		
@@ -78,13 +87,30 @@ public class TicTactical extends Game{
 		int slot_size = (miniboard_size / 3) - (miniboard_size / 9);
 		int in_x = Gdx.input.getX() - 30;
 		int in_y = Gdx.graphics.getHeight() - Gdx.input.getY() - 30;
-		int miniboard = ((((in_x + 4) / (miniboard_size + 10))) % 3) + 3 * ((in_y + 4) / (miniboard_size + 10));
-		int slot = ((in_x - (miniboard % 3) * (miniboard_size + 10)) / ((miniboard_size + 10) / 3) % 3) + 3 * ((in_y - (miniboard / 3) * (miniboard_size + 10)) / ((miniboard_size + 10) / 3));	
+		/*          
+		 * in_x / (miniboard_size + 10) le x
+		 * in_y / (miniboard_size + 10) le y
+		 * 
+		 * in_x / (miniboard_size + 10) + ((in_y / (miniboard_size + 10)) * 3)
+		 * 
+		 * (in_x - (miniboard % 3) * (miniboard_size + 12)) / slot_size le x
+		 * (in_y - (miniboard / 3) * (miniboard_size + 12)) / slot_size le y
+		 * 
+		 * ((in_x - (miniboard % 3) * (miniboard_size + 12)) / (3 * (slot_size + miniboard_size / 9))) + 
+		 * ((in_y - (miniboard / 3) * (miniboard_size + 12)) / (3 * (slot_size + miniboard_size / 9)))
+		 * 
+		 * 
+		 * 
+		 */
 		
-
+		int miniboard = in_x / (miniboard_size + 12) + 
+						((in_y / (miniboard_size + 12)) * 3);
+		int slot = ((in_x - (miniboard % 3) * (miniboard_size + 12)) / ((miniboard_size + 12) / 3)) + 
+				   ((in_y - (miniboard / 3) * (miniboard_size + 12)) / ((miniboard_size + 12) / 3)) * 3;
+		
 		
 		if(players == 0){
-			//you are on menu. So make a render_menu method and a menu_interaction method
+			render_Menu();
 		}else{
 			if(slot > 8){
 				slot = 8;
@@ -108,10 +134,21 @@ public class TicTactical extends Game{
 			
 			
 			if (Gdx.input.justTouched() && (players == 2 || (players == 1 && turn != ai_team))) {
-				if(win == 0 && in_x <= grid_size - 60 && in_y <= grid_size - 60 && in_x >= 0 && in_y >= 0){
-					                           
+				System.out.println("Hello!!");
+				System.out.println(win == 0 );
+				System.out.println(in_x < grid_size - 30);
+				System.out.println(in_y < grid_size - 30);
+				System.out.println(in_x >= 0 );
+				System.out.println(in_y >= 0 );  
+				if(win == 0 
+						&& in_x < grid_size - 30 
+						&& in_y < grid_size - 30 
+						&& in_x >= 0 
+						&& in_y >= 0){     
+					System.out.println("Hello!");
 					if(!(miniboard == -1 || slot == -1) && board[miniboard][slot] == 0 && (miniboard == next_move || big_board[next_move] != 0) && big_board[miniboard] == 0){
 						game_logic(miniboard, slot);
+						System.out.println("Hello");
 					}
 					
 				}else if(win != 0){
@@ -136,6 +173,9 @@ public class TicTactical extends Game{
 		winDisplay.dispose();
 		tieDisplay.dispose();
 		spritebatch.dispose();
+		MenuNoneSelected.dispose();
+		MenuOneSelected.dispose();
+		MenuTwoSelected.dispose();
 	}
 
 	@Override
@@ -205,8 +245,9 @@ public class TicTactical extends Game{
 		next_move = 9;
 		turn = false;
 		board = new char[9][9];
-		big_board = new char[9];
+		big_board = new char[10];
 		players = 0;
+		big_board[9] = 1;
 	}
 	
 	public void game_logic(int miniboard, int slot){
@@ -283,6 +324,7 @@ public class TicTactical extends Game{
 				}else{
 					spritebatch.draw(selectorR, 32.5f + ((miniboard % 3) * 2.5f)  + ((slot % 3) * 2.5f) + ((grid_size - 60) * (miniboard % 3)) / 3 + ((miniboard_size * (slot % 3) / 3) + slot_size / 2) - (slot_size / 3), 32.5f + ((miniboard / 3) * 2.5f)  + ((slot / 3) * 2.5f) + ((grid_size - 60) * (miniboard / 3)) / 3 + ((miniboard_size * (slot / 3) / 3) + slot_size / 2) - (slot_size / 3), slot_size, slot_size);
 				}
+				//System.out.println(miniboard + " " + slot);
 			}
 
 			//drawing x's and o's
@@ -334,7 +376,6 @@ public class TicTactical extends Game{
 	public int[] aiMove(){
 		int[] lastMove = new int[2];
 		lastMove[1] = next_move;
-		lastMove[0] = 5318008; // hold your screen upside down, and put some blocky font on that number.
 		boolean[] availableBoards = MinimaxHeuristicAI.getAvailableBoards(board, big_board, lastMove);
 		char temp;
 		
@@ -349,4 +390,25 @@ public class TicTactical extends Game{
 		return out;
 	}
 	
+	public void render_Menu(){
+		spritebatch.begin();{
+			if(!Gdx.input.justTouched()){
+				if(Gdx.input.getX() < Gdx.graphics.getWidth() / 3){
+					spritebatch.draw(MenuOneSelected, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+				}else if(Gdx.graphics.getWidth() - Gdx.input.getX() < Gdx.graphics.getWidth() / 3){
+					spritebatch.draw(MenuTwoSelected, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+					
+				}else{
+					spritebatch.draw(MenuNoneSelected, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());	
+				}
+			}else{
+				if(Gdx.input.getX() < Gdx.graphics.getWidth() / 3){
+					players = 1;
+				}else if(Gdx.graphics.getWidth() - Gdx.input.getX() < Gdx.graphics.getWidth() / 3){
+					players = 2;
+				}
+			}
+		}
+		spritebatch.end();
+	}
 }
