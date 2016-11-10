@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import javax.swing.JOptionPane;
-
 public class MinimaxHeuristicAI implements IAI {
 
 	private List<Number[]> minimaxMoves;
@@ -47,8 +45,8 @@ public class MinimaxHeuristicAI implements IAI {
 	}
 
 	private double minimax(char[][] board, char[] bigboard, boolean[] availableBoards, char turn, char player, char other, int depth) {
-		if (hasWon(bigboard, Character.toUpperCase(player))) return 1;
-		if (hasWon(bigboard, Character.toUpperCase(other))) return -1;
+		if (hasWon(bigboard, Character.toUpperCase(player))) return Double.MAX_VALUE;
+		if (hasWon(bigboard, Character.toUpperCase(other))) return -Double.MAX_VALUE;
 		if (depth >= maxTurns) return heuristic(board, bigboard, availableBoards, turn, player, other);
 
 		List<int[]> moves = getAvailableMoves(board, bigboard, availableBoards);
@@ -81,7 +79,7 @@ public class MinimaxHeuristicAI implements IAI {
 	}
 	
 	private double heuristic(char[][] board, char[] bigboard, boolean[] availableBoards, char turn, char player, char other) {
-		double score = heuristicBoard(bigboard, player)*10;
+		double score = heuristicBoard(bigboard, player)*10 - heuristicBoard(bigboard, other)*10;
 		
 		for (int i = 0; i<bigboard.length; i++) {
 			if (bigboard[i] == 0) {
@@ -90,7 +88,7 @@ public class MinimaxHeuristicAI implements IAI {
 			}
 		}
 		
-		return score/90;
+		return score;
 	}
 	
 	private double heuristicBoard(char[] board, char player) {
