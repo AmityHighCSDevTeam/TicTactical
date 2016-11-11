@@ -1,5 +1,5 @@
 package org.amityregion5.tictactical;
-
+//If you're reading this, you actually bothered to read my code. Hello.
 
 import org.amityregion5.tictactical.ai.IAI;
 import org.amityregion5.tictactical.ai.MinimaxHeuristicAI;
@@ -13,7 +13,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import org.amityregion5.tictactical.ai.MinimaxHeuristicAI;
 
 public class TicTactical extends Game{
-	// TODO is jus gam
 	// TODO things n stuff
 	//Grids arranged as follows:
 	/*
@@ -23,7 +22,8 @@ public class TicTactical extends Game{
 	* 
 	*/
 		
-	
+	//WARNING//WARNING//WARNING//WARNING//WARNING//WARNING//WARNING//WARNING//WARNING//WARNING//
+	//THE CODE AHEAD IS EXTREMELY MESSY. ATTEMPT TO COMPREHEND AT YOUR OWN RISK!!!
 	OrthographicCamera cam;
 
 	Texture X;
@@ -87,21 +87,7 @@ public class TicTactical extends Game{
 		int slot_size = (miniboard_size / 3) - (miniboard_size / 9);
 		int in_x = Gdx.input.getX() - 30;
 		int in_y = Gdx.graphics.getHeight() - Gdx.input.getY() - 30;
-		/*          
-		 * in_x / (miniboard_size + 10) le x
-		 * in_y / (miniboard_size + 10) le y
-		 * 
-		 * in_x / (miniboard_size + 10) + ((in_y / (miniboard_size + 10)) * 3)
-		 * 
-		 * (in_x - (miniboard % 3) * (miniboard_size + 12)) / slot_size le x
-		 * (in_y - (miniboard / 3) * (miniboard_size + 12)) / slot_size le y
-		 * 
-		 * ((in_x - (miniboard % 3) * (miniboard_size + 12)) / (3 * (slot_size + miniboard_size / 9))) + 
-		 * ((in_y - (miniboard / 3) * (miniboard_size + 12)) / (3 * (slot_size + miniboard_size / 9)))
-		 * 
-		 * 
-		 * 
-		 */
+		
 		
 		int miniboard = in_x / (miniboard_size + 12) + 
 						((in_y / (miniboard_size + 12)) * 3);
@@ -134,12 +120,7 @@ public class TicTactical extends Game{
 			
 			
 			if (Gdx.input.justTouched() && (players == 2 || (players == 1 && turn != ai_team))) {
-				System.out.println("Hello!!");
-				System.out.println(win == 0 );
-				System.out.println(in_x < grid_size - 30);
-				System.out.println(in_y < grid_size - 30);
-				System.out.println(in_x >= 0 );
-				System.out.println(in_y >= 0 );  
+				
 				if(win == 0 
 						&& in_x < grid_size - 30 
 						&& in_y < grid_size - 30 
@@ -148,7 +129,6 @@ public class TicTactical extends Game{
 					System.out.println("Hello!");
 					if(!(miniboard == -1 || slot == -1) && board[miniboard][slot] == 0 && (miniboard == next_move || big_board[next_move] != 0) && big_board[miniboard] == 0){
 						game_logic(miniboard, slot);
-						System.out.println("Hello");
 					}
 					
 				}else if(win != 0){
