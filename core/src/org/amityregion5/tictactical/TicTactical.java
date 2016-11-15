@@ -91,8 +91,8 @@ public class TicTactical extends Game{
 		
 		int miniboard = in_x / (miniboard_size + 12) + 
 						((in_y / (miniboard_size + 12)) * 3);
-		int slot = ((in_x - (miniboard % 3) * (miniboard_size + 12)) / ((miniboard_size + 12) / 3)) + 
-				   ((in_y - (miniboard / 3) * (miniboard_size + 12)) / ((miniboard_size + 12) / 3)) * 3;
+		int slot = ((in_x - (miniboard % 3) * (miniboard_size + 12)) / ((miniboard_size + 15) / 3)) + 
+				   ((in_y - (miniboard / 3) * (miniboard_size + 12)) / ((miniboard_size + 15) / 3)) * 3;
 		
 		
 		if(players == 0){
